@@ -54,38 +54,50 @@ window.onload = checkLogin;
 
 
 // ===== Upload to S3 uploads/ prefix =====
+// ===== Upload via Lambda =====
 const lambdaUrl = "https://77b5nqpywjgtpxbw2aokcxdxt40bqiwh.lambda-url.us-east-1.on.aws/";
 
-document.getElementById("uploadBtn").onclick = async () => {
-  const file = document.getElementById("fileInput").files[0];
-  if (!file) {
-    alert("Select file first");
-    return;
-  }
+function setupUpload() {
+  const uploadBtn = document.getElementById("uploadBtn");
+  const fileInput = document.getElementById("fileInput");
 
-  const reader = new FileReader();
-
-  reader.onload = async () => {
-    const base64 = reader.result.split(",")[1];
-
-    const response = await fetch(lambdaUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        fileName: file.name,
-        fileContent: base64,
-        contentType: file.type,
-      }),
-    });
-
-    if (response.ok) {
-      alert("Upload successful ✅");
-    } else {
-      alert("Upload failed ❌");
+  uploadBtn.onclick = async () => {
+    const file = fileInput.files[0];
+    if (!file) {
+      alert("Select file first");
+      return;
     }
-  };
 
-  reader.readAsDataURL(file);
+    const reader = new FileReader();
+
+    reader.onload = async () => {
+      const base64 = reader.result.split(",")[1];
+
+      const response = await fetch(lambdaUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          fileName: file.name,
+          fileContent: base64,
+          contentType: file.type
+        })
+      });
+
+      if (response.ok) {
+        alert("Upload successful ✅");
+      } else {
+        alert("Upload failed ❌");
+      }
+    };
+
+    reader.readAsDataURL(file);
+  };
+}
+
+// ===== Run on load =====
+window.onload = () => {
+  checkLogin();
+  setupUpload();
 };
