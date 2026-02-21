@@ -48,6 +48,9 @@ loginBtn.onclick = () => {
 logoutBtn.onclick = () => {
   localStorage.removeItem("loggedIn");
 
+  document.getElementById("fileList").innerHTML = "";
+  document.getElementById("fileSection").style.display = "none";
+
   const logoutUrl =
     `${cognitoDomain}/logout?client_id=${clientId}` +
     `&logout_uri=${encodeURIComponent(redirectUri)}`;
