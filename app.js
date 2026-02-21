@@ -54,6 +54,8 @@ window.onload = checkLogin;
 
 
 // ===== Upload to S3 uploads/ prefix =====
+const lambdaUrl = "https://77b5nqpywjgtpxbw2aokcxdxt40bqiwh.lambda-url.us-east-1.on.aws/";
+
 document.getElementById("uploadBtn").onclick = async () => {
   const file = document.getElementById("fileInput").files[0];
   if (!file) {
@@ -61,27 +63,29 @@ document.getElementById("uploadBtn").onclick = async () => {
     return;
   }
 
-  const uploadUrl =
-    "https://dhroov-102315294-primary.s3.amazonaws.com/uploads/" +
-    encodeURIComponent(file.name);
+  const reader = new FileReader();
 
-  try {
-    const res = await fetch(uploadUrl, {
-      method: "PUT",
+  reader.onload = async () => {
+    const base64 = reader.result.split(",")[1];
+
+    const response = await fetch(lambdaUrl, {
+      method: "POST",
       headers: {
-        "Content-Type": file.type
+        "Content-Type": "application/json",
       },
-      body: file
+      body: JSON.stringify({
+        fileName: file.name,
+        fileContent: base64,
+        contentType: file.type,
+      }),
     });
 
-    if (res.ok) {
+    if (response.ok) {
       alert("Upload successful ✅");
     } else {
-      alert("Upload failed");
-      console.error(await res.text());
+      alert("Upload failed ❌");
     }
-  } catch (e) {
-    console.error(e);
-    alert("Upload error");
-  }
+  };
+
+  reader.readAsDataURL(file);
 };
