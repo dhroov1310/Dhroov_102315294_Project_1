@@ -16,12 +16,16 @@ function checkLogin() {
 
   const isLoggedIn = localStorage.getItem("loggedIn") === "true";
 
+  const fileSection = document.getElementById("fileList");
+
   if (isLoggedIn) {
     loginBtn.style.display = "none";
     logoutBtn.style.display = "inline";
+    fileSection.style.display = "block";
   } else {
     loginBtn.style.display = "inline";
     logoutBtn.style.display = "none";
+    fileSection.style.display = "none";
   }
 }
 
@@ -126,5 +130,9 @@ async function loadFiles() {
 window.addEventListener("DOMContentLoaded", () => {
   checkLogin();
   setupUpload();
-  loadFiles();
+
+  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+  if (isLoggedIn) {
+    loadFiles();
+  }
 });
