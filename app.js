@@ -2,6 +2,8 @@ const cognitoDomain = "https://us-east-18y4bjwsud.auth.us-east-1.amazoncognito.c
 const clientId = "77h22id44pgblfeigt5q10pilj";
 const redirectUri = "https://dhroov1310.github.io/Dhroov_102315294_Project_1/";
 
+const lambdaUrl = "https://77b5nqpywjgtpxbw2aokcxdxt40bqiwh.lambda-url.us-east-1.on.aws/";
+
 const loginBtn = document.getElementById("loginBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 
@@ -16,7 +18,8 @@ function checkLogin() {
 
   const isLoggedIn = localStorage.getItem("loggedIn") === "true";
 
-  const fileSection = document.getElementById("fileList");
+  const fileSection = document.getElementById("fileSection");
+  const fileList = document.getElementById("fileList");
 
   if (isLoggedIn) {
     loginBtn.style.display = "none";
@@ -26,6 +29,7 @@ function checkLogin() {
     loginBtn.style.display = "inline";
     logoutBtn.style.display = "none";
     fileSection.style.display = "none";
+    fileList.innerHTML = "";
   }
 }
 
@@ -51,16 +55,7 @@ logoutBtn.onclick = () => {
   window.location.href = logoutUrl;
 };
 
-// ===== Run on load =====
-window.onload = checkLogin;
-
-
-
-
-// ===== Upload to S3 uploads/ prefix =====
 // ===== Upload via Lambda =====
-const lambdaUrl = "https://77b5nqpywjgtpxbw2aokcxdxt40bqiwh.lambda-url.us-east-1.on.aws/";
-
 function setupUpload() {
   const uploadBtn = document.getElementById("uploadBtn");
   const fileInput = document.getElementById("fileInput");
@@ -101,8 +96,11 @@ function setupUpload() {
   };
 }
 
-
+// ===== Load files from S3 via Lambda =====
 async function loadFiles() {
+  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+  if (!isLoggedIn) return;
+
   try {
     const response = await fetch(lambdaUrl);
     const files = await response.json();
@@ -117,7 +115,7 @@ async function loadFiles() {
 
     files.forEach(file => {
       const li = document.createElement("li");
-      li.textContent = `${file.name} (${Math.round(file.size/1024)} KB)`;
+      li.textContent = `${file.name} (${Math.round(file.size / 1024)} KB)`;
       list.appendChild(li);
     });
 
@@ -126,13 +124,12 @@ async function loadFiles() {
   }
 }
 
-
+// ===== Init after DOM ready =====
 window.addEventListener("DOMContentLoaded", () => {
   checkLogin();
   setupUpload();
 
-  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-  if (isLoggedIn) {
+  if (localStorage.getItem("loggedIn") === "true") {
     loadFiles();
   }
 });
