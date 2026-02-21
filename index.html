@@ -11,8 +11,15 @@
 <button id="logoutBtn">Logout</button>
 
 <h2>Upload File</h2>
-<input type="file" id="fileInput">
-<button id="uploadBtn">Upload</button>
+
+<form
+  action="https://dhroov-102315294-primary.s3.amazonaws.com/uploads/"
+  method="post"
+  enctype="multipart/form-data"
+>
+  <input type="file" name="file" required />
+  <button type="submit">Upload</button>
+</form>
 
 <h2>Your Files</h2>
 <ul id="fileList"></ul>
@@ -22,3 +29,4 @@
 </body>
 
 </html>
+
