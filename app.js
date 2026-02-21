@@ -87,6 +87,7 @@ function setupUpload() {
 
       if (response.ok) {
         alert("Upload successful ✅");
+        loadFiles();
       } else {
         alert("Upload failed ❌");
       }
@@ -96,8 +97,24 @@ function setupUpload() {
   };
 }
 
-// ===== Run on load =====
+
+async function loadFiles() {
+  const response = await fetch(lambdaUrl);
+  const files = await response.json();
+
+  const list = document.getElementById("fileList");
+  list.innerHTML = "";
+
+  files.forEach(f => {
+    const li = document.createElement("li");
+    li.textContent = `${f.name} (${Math.round(f.size/1024)} KB)`;
+    list.appendChild(li);
+  });
+}
+
+
 window.onload = () => {
   checkLogin();
   setupUpload();
+  loadFiles();
 };
