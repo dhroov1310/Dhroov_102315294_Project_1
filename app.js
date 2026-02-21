@@ -99,22 +99,32 @@ function setupUpload() {
 
 
 async function loadFiles() {
-  const response = await fetch(lambdaUrl);
-  const files = await response.json();
+  try {
+    const response = await fetch(lambdaUrl);
+    const files = await response.json();
 
-  const list = document.getElementById("fileList");
-  list.innerHTML = "";
+    const list = document.getElementById("fileList");
+    list.innerHTML = "";
 
-  files.forEach(f => {
-    const li = document.createElement("li");
-    li.textContent = `${f.name} (${Math.round(f.size/1024)} KB)`;
-    list.appendChild(li);
-  });
+    if (!files.length) {
+      list.innerHTML = "<li>No files uploaded yet</li>";
+      return;
+    }
+
+    files.forEach(file => {
+      const li = document.createElement("li");
+      li.textContent = `${file.name} (${Math.round(file.size/1024)} KB)`;
+      list.appendChild(li);
+    });
+
+  } catch (err) {
+    console.error("List error:", err);
+  }
 }
 
 
-window.onload = () => {
+window.addEventListener("DOMContentLoaded", () => {
   checkLogin();
   setupUpload();
   loadFiles();
-};
+});
