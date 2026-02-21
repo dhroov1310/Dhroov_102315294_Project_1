@@ -49,3 +49,39 @@ logoutBtn.onclick = () => {
 
 // ===== Run on load =====
 window.onload = checkLogin;
+
+
+
+
+// ===== Upload to S3 uploads/ prefix =====
+document.getElementById("uploadBtn").onclick = async () => {
+  const file = document.getElementById("fileInput").files[0];
+  if (!file) {
+    alert("Select file first");
+    return;
+  }
+
+  const uploadUrl =
+    "https://dhroov-102315294-primary.s3.amazonaws.com/uploads/" +
+    encodeURIComponent(file.name);
+
+  try {
+    const res = await fetch(uploadUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": file.type
+      },
+      body: file
+    });
+
+    if (res.ok) {
+      alert("Upload successful ✅");
+    } else {
+      alert("Upload failed");
+      console.error(await res.text());
+    }
+  } catch (e) {
+    console.error(e);
+    alert("Upload error");
+  }
+};
