@@ -20,16 +20,25 @@ function checkLogin() {
 
   const fileSection = document.getElementById("fileSection");
   const fileList = document.getElementById("fileList");
+  const uploadBtn = document.getElementById("uploadBtn");
+  const fileInput = document.getElementById("fileInput");
 
   if (isLoggedIn) {
     loginBtn.style.display = "none";
     logoutBtn.style.display = "inline";
     fileSection.style.display = "block";
+
+    uploadBtn.disabled = false;
+    fileInput.disabled = false;
+
   } else {
     loginBtn.style.display = "inline";
     logoutBtn.style.display = "none";
     fileSection.style.display = "none";
     fileList.innerHTML = "";
+
+    uploadBtn.disabled = true;
+    fileInput.disabled = true;
   }
 }
 
@@ -64,6 +73,12 @@ function setupUpload() {
   const fileInput = document.getElementById("fileInput");
 
   uploadBtn.onclick = async () => {
+    const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+    if (!isLoggedIn) {
+      alert("Please login first");
+      return;
+    }
+
     const file = fileInput.files[0];
     if (!file) {
       alert("Select file first");
@@ -77,9 +92,7 @@ function setupUpload() {
 
       const response = await fetch(lambdaUrl, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           fileName: file.name,
           fileContent: base64,
