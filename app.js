@@ -10,7 +10,6 @@ function checkLogin() {
   const hash = window.location.hash;
 
   if (hash.includes("id_token")) {
-    // User just logged in
     localStorage.setItem("loggedIn", "true");
     window.history.replaceState({}, document.title, redirectUri);
   }
