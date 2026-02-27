@@ -131,7 +131,20 @@ async function loadFiles() {
 
     files.forEach(file => {
       const li = document.createElement("li");
-      li.textContent = `${file.name} (${Math.round(file.size / 1024)} KB)`;
+
+      const fileText = document.createElement("span");
+      fileText.textContent = `${file.name} (${Math.round(file.size / 1024)} KB)`;
+
+      const downloadBtn = document.createElement("a");
+      downloadBtn.textContent = "Download";
+      downloadBtn.href = `https://dhroov-102315294-primary.s3.amazonaws.com/uploads/${encodeURIComponent(file.name)}`;
+      downloadBtn.target = "_blank";
+      downloadBtn.style.marginLeft = "10px";
+      downloadBtn.style.color = "#1a73e8";
+      downloadBtn.style.fontWeight = "bold";
+
+      li.appendChild(fileText);
+      li.appendChild(downloadBtn);
       list.appendChild(li);
     });
 
