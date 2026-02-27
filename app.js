@@ -137,7 +137,7 @@ async function loadFiles() {
 
      const downloadBtn = document.createElement("a");
 downloadBtn.textContent = "Download";
-downloadBtn.href = `https://dhroov-102315294-primary.s3.amazonaws.com/uploads/${encodeURIComponent(file.name)}`;
+downloadBtn.href = `${lambdaUrl}?file=${encodeURIComponent(file.name)}`;
 downloadBtn.target = "_blank";
 
 downloadBtn.style.marginLeft = "12px";
